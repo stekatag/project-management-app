@@ -1,7 +1,7 @@
 ###########################################
-# Production Image - FrankenPHP
+# Production Image - PHP-FPM + NGINX
 ###########################################
-FROM serversideup/php:8.4-frankenphp
+FROM serversideup/php:8.4-fpm-nginx
 
 # Switch to root to install packages
 USER root
@@ -76,5 +76,11 @@ ENV AUTORUN_LARAVEL_EVENT_CACHE=false
 # Health check using Laravel's built-in health check endpoint
 ENV HEALTHCHECK_PATH=/up
 
-# Expose port (FrankenPHP default is 8080)
+# Expose port (NGINX default is 8080)
 EXPOSE 8080
+
+# The serversideup/php image will automatically handle:
+# - Creating storage symlink (storage:link)
+# - Running database migrations (migrate --force)
+# - Caching config, routes, and views
+# - Ensuring database is ready before migrations
