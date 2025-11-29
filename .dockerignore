@@ -1,0 +1,49 @@
+# Dependencies
+
+node_modules/
+
+# Environment files
+
+.env
+.env.\*
+!.env.example
+
+# OS generated files
+
+.DS*Store
+.DS_Store?
+.*\*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Laravel specific
+
+storage/logs/
+storage/framework/cache/
+storage/framework/sessions/
+storage/framework/testing/
+storage/framework/views/
+storage/app/public/
+bootstrap/cache/
+
+# Cache
+
+.cache/
+.parcel-cache/
+
+# Package manager files
+
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Composer files (keep composer.json and composer.lock)
+
+composer.phar
+
+# Local configuration
+
+.env.local
+.env.\*.local
