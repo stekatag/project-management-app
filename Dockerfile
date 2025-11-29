@@ -8,12 +8,7 @@ USER root
 
 # Install additional PHP extensions
 RUN install-php-extensions \
-    pdo_mysql \
-    redis \
-    zip \
-    opcache \
     intl \
-    pcntl \
     gd \
     exif \
     bcmath
@@ -31,6 +26,17 @@ WORKDIR /var/www/html
 # Copy application files
 COPY --chown=www-data:www-data . .
 
+# Create required directories with proper permissions before composer install
+RUN mkdir -p \
+    bootstrap/cache \
+    storage/framework/cache \
+    storage/framework/sessions \
+    storage/framework/views \
+    storage/app/public \
+    storage/logs && \
+    chown -R www-data:www-data bootstrap/cache storage && \
+    chmod -R 775 bootstrap/cache storage
+
 # Switch to www-data for installations
 USER www-data
 
@@ -44,16 +50,6 @@ RUN composer install \
 # Install Node dependencies and build frontend assets
 RUN pnpm install && \
     pnpm run build
-
-# Switch back to root for final permissions
-USER root
-
-# Ensure proper permissions
-RUN chown -R www-data:www-data \
-    storage \
-    bootstrap/cache \
-    public/build && \
-    chmod -R 775 storage bootstrap/cache
 
 # Switch back to www-data
 USER www-data
