@@ -1,0 +1,70 @@
+# Laravel Reverb WebSocket Server
+# This runs the Laravel Reverb server for real-time broadcasting
+
+services:
+  reverb:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel-reverb
+    restart: unless-stopped
+
+    # Override the default command to run Reverb
+    command:
+      [
+        "php",
+        "/var/www/html/artisan",
+        "reverb:start",
+        "--host=0.0.0.0",
+        "--port=6001",
+      ]
+
+    ports:
+      - "6001:6001"
+
+    environment:
+      # Dokploy will inject these from Environment Variables UI
+      APP_ENV: ${APP_ENV}
+      APP_DEBUG: ${APP_DEBUG}
+      APP_KEY: ${APP_KEY}
+      APP_URL: ${APP_URL}
+      ASSET_URL: ${ASSET_URL}
+
+      DB_CONNECTION: ${DB_CONNECTION}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+
+      REVERB_SERVER_HOST: ${REVERB_SERVER_HOST}
+      REVERB_SERVER_PORT: ${REVERB_SERVER_PORT}
+      REVERB_APP_ID: ${REVERB_APP_ID}
+      REVERB_APP_KEY: ${REVERB_APP_KEY}
+      REVERB_APP_SECRET: ${REVERB_APP_SECRET}
+      REVERB_HOST: ${REVERB_HOST}
+      REVERB_PORT: ${REVERB_PORT}
+      REVERB_SCHEME: ${REVERB_SCHEME}
+
+      BROADCAST_CONNECTION: ${BROADCAST_CONNECTION}
+      CACHE_STORE: ${CACHE_STORE}
+      SESSION_DRIVER: ${SESSION_DRIVER}
+
+      LOG_CHANNEL: ${LOG_CHANNEL}
+      LOG_LEVEL: ${LOG_LEVEL}
+
+      AUTORUN_ENABLED: "false"
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+    networks:
+      - dokploy-network
+
+networks:
+  dokploy-network:
+    external: true
