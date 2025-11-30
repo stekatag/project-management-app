@@ -25,7 +25,20 @@ return Application::configure(basePath: dirname(__DIR__))
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
         ]);
 
-        //
+        // Trust private subnets for Docker/Dokploy proxy headers
+        // More secure than trusting all proxies - only trusts Docker internal networks
+        $middleware->trustProxies(
+            at: [
+                '10.0.0.0/8',      // Docker internal network
+                '172.16.0.0/12',   // Docker default bridge network
+                '192.168.0.0/16',  // Private network
+            ],
+            headers: \Illuminate\Http\Request::HEADER_X_FORWARDED_FOR |
+                \Illuminate\Http\Request::HEADER_X_FORWARDED_HOST |
+                \Illuminate\Http\Request::HEADER_X_FORWARDED_PORT |
+                \Illuminate\Http\Request::HEADER_X_FORWARDED_PROTO |
+                \Illuminate\Http\Request::HEADER_X_FORWARDED_PREFIX
+        );
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->respond(function (Response $response) {
